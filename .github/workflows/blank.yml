@@ -1,191 +1,29 @@
-import json
-import os
-import re
-import requests
-from bs4 import BeautifulSoup
+name: Canadian Remote Tech Writer Job Scraper
 
-# --- CONFIGURATION ---
-DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
-SEEN_JOBS_FILE = "seen_jobs.json"
-
-# Comprehensive Regex for your 19 targeted roles
-TARGET_ROLES_REGEX = re.compile(
-    r"("
-    r"technical\s+content\s+writer|content\s+engineer|information\s+author|"
-    r"information\s+developer|documentation\s+engineer|technical\s+content\s+engineer|"
-    r"technical\s+information\s+author|technical\s+author|documentation\s+specialist|"
-    r"technical\s+communicator|api\s+writer|programmer\s+writer|docs?\s+engineer|"
-    r"developer\s+content\s+writer|knowledge\s+base\s+specialist|content\s+designer|"
-    r"information\s+architect|technical\s+editor|developer\s+educator"
-    r")",
-    re.IGNORECASE,
-)
-
-# Location filters ensuring it targets Canadian remote positions
-CANADA_REMOTE_REGEX = re.compile(
-    r"(canada|remote|work from home|anywhere in canada)", re.IGNORECASE
-)
-
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    )
-}
-
-
-def load_seen_jobs():
-    """Loads previously alerted job links to prevent duplicates."""
-    if os.path.exists(SEEN_JOBS_FILE):
-        try:
-            with open(SEEN_JOBS_FILE, "r") as f:
-                return set(json.load(f))
-        except json.JSONDecodeError:
-            return set()
-    return set()
-
-
-def save_seen_jobs(seen_set):
-    """Saves the updated set of seen job links."""
-    with open(SEEN_JOBS_FILE, "w") as f:
-        json.dump(list(seen_set), f)
-
-
-def send_discord_alert(job):
-    """Sends a rich embed notification to your Discord channel."""
-    if not DISCORD_WEBHOOK_URL:
-        print("Error: DISCORD_WEBHOOK_URL is missing.")
-        return
-
-    payload = {
-        "username": "Canadian Remote Job Bot",
-        "embeds": [
-            {
-                "title": job["title"],
-                "url": job["link"],
-                "color": 3447003,  # Blue accent
-                "fields": [
-                    {
-                        "name": "🏢 Company",
-                        "value": job["company"],
-                        "inline": True,
-                    },
-                    {
-                        "name": "📍 Location",
-                        "value": job["location"],
-                        "inline": True,
-                    },
-                ],
-                "footer": {
-                    "text": (
-                        "Targeted Technical Content & Documentation Scraper"
-                    )
-                },
-            }
-        ],
-    }
-
-    response = requests.post(DISCORD_WEBHOOK_URL, json=payload)
-    if response.status_code == 204:
-        print(f"Alert sent successfully for: {job['title']}")
-    else:
-        print(f"Failed to send Discord alert: {response.status_code}")
-
-
-def scrape_jobs():
-    """Scrapes target boards/feeds for matching remote Canadian roles."""
-    matched_jobs = []
-
-    # Example target feed / search results URL (Adjust based on source boards)
-    search_url = "https://ca.indeed.com/jobs?q=Technical+Writer&l=Canada&remoteInd=00T"
-
-    response = requests.get(search_url, headers=HEADERS)
-    if response.status_code != 200:
-        print(f"Failed to retrieve page. Status code: {response.status_code}")
-        return matched_jobs
-
-    soup = BeautifulSoup(response.text, "html.parser")
-
-    # DOM selectors tailored to target structure (example layout)
-    for job_card in soup.find_all("div", class_="cardOutline"):
-        title_elem = job_card.find("h2", class_="jobTitle")
-        company_elem = job_card.find("span", class_="companyName")
-        location_elem = job_card.find("div", class_="companyLocation")
-        link_elem = job_card.find("a", href=True)
-
-        if title_elem and location_elem and link_elem:
-            title = title_elem.get_text(strip=True)
-            location = location_elem.get_text(strip=True)
-            company = (
-                company_elem.get_text(strip=True) if company_elem else "N/A"
-            )
-            link = "https://ca.indeed.com" + link_elem["href"]
-
-            # Filter validation
-            if TARGET_ROLES_REGEX.search(
-                title
-            ) and CANADA_REMOTE_REGEX.search(location):
-                matched_jobs.append(
-                    {
-                        "id": link,  # Use unique job URL as identifier
-                        "title": title,
-                        "company": company,
-                        "location": location,
-                        "link": link,
-                    }
-                )
-
-    return matched_jobs
-
-
-if __name__ == "__main__":
-    print("Starting job search execution...")
-    seen_jobs = load_seen_jobs()
-    new_jobs_found = 0
-
-    jobs = scrape_jobs()
-
-    for job in jobs:
-        if job["id"] not in seen_jobs:
-            send_discord_alert(job)
-            seen_jobs.add(job["id"])
-            new_jobs_found += 1
-
-    save_seen_jobs(seen_jobs)
-    print(
-        f"Execution complete. Found {len(jobs)} total matches, sent {new_jobs_found} new alerts."
-    )
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
+  schedule:
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  scrape-and-notify:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Install dependencies
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4
+
+      - name: Run job scraper
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          python scraper.py
