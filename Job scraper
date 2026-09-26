@@ -1,0 +1,21 @@
+import requests
+from bs4 import BeautifulSoup
+import os
+import json
+
+# Your scraping logic here
+def scrape_jobs():
+    # Example: fetch and parse job listings
+    pass
+
+def notify_discord(message):
+    webhook_url = os.getenv('DISCORD_WEBHOOK_URL')
+    if webhook_url:
+        requests.post(webhook_url, json={'content': message})
+
+if __name__ == '__main__':
+    try:
+        scrape_jobs()
+        # notify_discord with results
+    except Exception as e:
+        print(f"Error: {e}")
