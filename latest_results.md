@@ -1,6 +1,6 @@
 # Latest job matches
 
-10 current matches. Marked NEW when first alerted in the most recent run.
+11 current matches. Marked NEW when first alerted in the most recent run.
 Source: [Himalayas](https://himalayas.app) remote jobs open to Canada.
 
 | | Title | Company | Location | Pay | Posted |
@@ -14,4 +14,5 @@ Source: [Himalayas](https://himalayas.app) remote jobs open to Canada.
 |  | [Content Strategist](https://himalayas.app/companies/ratehub-ca/jobs/content-strategist) | Ratehub.ca | Canada (remote) | CAD 75,000-100,000 annual | 2026-09-13 |
 |  | [Technical Writer](https://himalayas.app/companies/micro1/jobs/technical-writer-8891880471) | micro1 | Canada, United Kingdom, United States (remote) | - | 2026-09-12 |
 |  | [Content Strategist, Contract (CA)](https://himalayas.app/companies/pointclickcare/jobs/content-strategist-contract-ca) | PointClickCare | Canada (remote) | CAD 91,000-97,000 annual | 2026-09-03 |
+|  | [Senior GEO & Content Strategist](https://himalayas.app/companies/reunion-marketing/jobs/senior-geo-content-strategist) | Reunion Marketing | Worldwide (remote) | - | 2026-08-19 |
 |  | [Technical Content Engineer](https://himalayas.app/companies/nango/jobs/technical-content-engineer) | Nango | Argentina, Brazil, Canada, Chile, Mexico, Switzerland, United Kingdom, United States, Uruguay (remote) | USD 100,000-170,000 annual | 2026-08-12 |
