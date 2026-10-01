@@ -1,10 +1,11 @@
 # Latest job matches
 
-9 current matches. Marked NEW when first alerted in the most recent run.
+10 current matches. Marked NEW when first alerted in the most recent run.
 Source: [Himalayas](https://himalayas.app) remote jobs open to Canada.
 
 | | Title | Company | Location | Pay | Posted |
 |---|---|---|---|---|---|
+|  | [TECHNICAL WRITER](https://himalayas.app/companies/vsolvit/jobs/technical-writer) | VSolvit | Canada, United States (remote) | USD 65,000-95,000 annual | 2026-09-30 |
 |  | [Senior Technical SR&ED Writer (Software Focus)](https://himalayas.app/companies/zero-to-one-strategic/jobs/senior-technical-sr-ed-writer-software-focus) | Zero To One Strategic | Canada (remote) | CAD 110,000-130,000 annual | 2026-09-22 |
 |  | [Business Information Architect](https://himalayas.app/companies/genetec/jobs/business-information-architect) | Genetec | Canada (remote) | - | 2026-09-22 |
 |  | [Technical Author (multiple roles and seniority levels)](https://himalayas.app/companies/canonical/jobs/technical-author-multiple-roles-and-seniority-levels) | Canonical | Worldwide (remote) | - | 2026-09-20 |
